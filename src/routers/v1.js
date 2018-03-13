@@ -9,7 +9,11 @@ const router = new Router()
 router.get('/:articlePath', async ctx => {
   try {
     const { articlePath } = ctx.params
-    const [data] = await Article.find({ path: articlePath })
+    const [data] = await Article.find(
+      { path: articlePath },
+      {},
+      { select: { cookie: false } },
+    )
 
     ctx.body = data
   } catch (e) {
@@ -48,7 +52,7 @@ router.put('/update', async ctx => {
     if (!cookie || !article || cookie !== article.cookie) {
       throw new Error('Access denied')
     }
-    ctx.body = 'all good'
+    await Article.updateOne({ _id: article.id }, body)
   } catch (e) {
     ctx.throw(418, e.message)
   }

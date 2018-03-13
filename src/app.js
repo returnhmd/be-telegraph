@@ -14,9 +14,4 @@ app.use(bodyParser({}))
 
 app.use(r.routes())
 
-// app.use(async (ctx, next) => {
-//   ctx.body = `Hello, ${ctx}`
-//   await next()
-// })
-
 app.listen(3000)
