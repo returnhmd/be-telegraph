@@ -7,66 +7,68 @@ const { uploadImg } = require('../helper')
 const router = new Router()
 
 router.get('/:articlePath', async ctx => {
-  try {
-    const { articlePath } = ctx.params
-    const [data] = await Article.find(
-      { path: articlePath },
-      {},
-      { select: { cookie: false } },
-    )
+  const { articlePath } = ctx.params
+  const foundArticle = await Article.findOne(
+    { path: articlePath },
+    {},
+    { select: { cookie: false } },
+  )
+  if (!foundArticle) ctx.throw(404)
 
-    ctx.body = data
-  } catch (e) {
-    ctx.throw(418, e.message)
-  }
+  ctx.body = foundArticle
 })
 
 router.post('/save', async ctx => {
-  try {
-    const { body } = ctx.request
+  const { body } = ctx.request
 
-    let cookie = ctx.cookies.get('uuid')
-    if (!cookie) {
-      cookie = uuid()
-      ctx.cookies.set('uuid', cookie)
-    }
-
-    const article = new Article({ ...body, cookie })
-    await article.save()
-
-    ctx.body = article
-  } catch (e) {
-    ctx.throw(418, e.message)
+  let cookie = ctx.cookies.get('uuid')
+  if (!cookie) {
+    cookie = uuid()
+    ctx.cookies.set('uuid', cookie)
   }
+
+  const createdArticle = new Article({ ...body, cookie })
+  await createdArticle.save()
+
+  ctx.status = 201
+  ctx.body = { id: createdArticle.id, path: createdArticle.path }
 })
 
 router.put('/update', async ctx => {
-  try {
-    const { body } = ctx.request
-    const cookie = ctx.cookies.get('uuid')
-    const article = await Article.findById(
-      body.id,
-      {},
-      { select: { cookie: true } },
-    )
-    if (!cookie || !article || cookie !== article.cookie) {
-      throw new Error('Access denied')
-    }
-    await Article.updateOne({ _id: article.id }, body)
-  } catch (e) {
-    ctx.throw(418, e.message)
+  const { body } = ctx.request
+  const cookie = ctx.cookies.get('uuid')
+  const article = await Article.findById(
+    body.id,
+    {},
+    { select: { cookie: true } },
+  )
+  if (!cookie || !article || cookie !== article.cookie) {
+    ctx.throw(403, 'Access denied')
   }
+  await Article.updateOne({ _id: article.id }, body)
+
+  ctx.status = 204
 })
 
-router.post('/check')
+router.post('/check', async ctx => {
+  const { body } = ctx.request
+
+  let accessToEdit = false
+
+  const { cookie } = await Article.findById(
+    body.id,
+    {},
+    { select: { cookie: true } },
+  )
+
+  if (ctx.cookies.get('uuid') === cookie) accessToEdit = true
+
+  ctx.body = { can_edit: accessToEdit }
+})
 
 router.post('/upload', async ctx => {
-  try {
-    const createdFile = await uploadImg(ctx.req, '/home/hmd/nginxfiles/imgs')
-    ctx.body = createdFile
-  } catch (e) {
-    ctx.throw(418, e.message)
-  }
+  const createdFilePath = await uploadImg(ctx.req, '/home/hmd/nginxfiles/imgs')
+  ctx.body = { file_path: createdFilePath }
 })
 
 module.exports = router

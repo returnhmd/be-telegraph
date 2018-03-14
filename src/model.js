@@ -13,14 +13,12 @@ const articleSchema = new Schema({
 })
 
 articleSchema.pre('validate', function fixLengthTitle() {
-  console.log('first validate')
   if (this.title.length > 40) {
     this.title = `${this.title.slice(40)}...`
   }
 })
 
 articleSchema.pre('validate', function genPathArticle(next) {
-  console.log('second validate')
   const pathArr = []
 
   let newTitle = latinize(this.title)
@@ -43,11 +41,10 @@ articleSchema.pre('validate', function genPathArticle(next) {
     .count()
     .then(coincidences => {
       if (coincidences) pathArr.push(coincidences)
-    })
-    .then(() => {
       this.path = pathArr.join('-')
     })
-    .then(() => next())
+    .then(next)
+    .catch(next)
 })
 
 const Article = mongoose.model('Article', articleSchema)

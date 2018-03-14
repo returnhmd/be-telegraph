@@ -16,12 +16,12 @@ module.exports = {
         if (typeFile !== 'image') {
           reject(new Error('File must be image'))
         }
-        const createdImgName = `${uuid()}.${extFile}`
-        const saveTo = path.resolve(pathToSave, `${createdImgName}`)
+        const newImgName = `${uuid()}.${extFile}`
+        const saveTo = path.resolve(pathToSave, `${newImgName}`)
 
         file.pipe(fs.createWriteStream(saveTo))
 
-        resolve(createdImgName)
+        resolve(newImgName)
       })
       request.pipe(busboy)
     })
