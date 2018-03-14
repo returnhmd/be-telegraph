@@ -1,8 +1,11 @@
 const mongoose = require('mongoose')
+const config = require('../config')
 
-const connectStr = 'mongodb://localhost/telegraph'
+const connectStr = config.mongoConnect
 
 mongoose.connect(`${connectStr}`)
+
+if (config.env.isDev) mongoose.set('debug', true)
 
 const conn = mongoose.connection
 

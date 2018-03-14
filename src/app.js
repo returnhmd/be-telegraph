@@ -6,14 +6,15 @@ require('./db')
 
 const r = require('./routers')
 const { errorCatcher } = require('./middlewares')
+const config = require('./config')
 
 const app = new Koa()
-app.keys = ['secret']
+app.keys = config.appKeys
 
-app.use(logger({}))
+app.use(logger(config.logger))
+app.use(bodyParser(config.bodyParser))
+
 app.use(errorCatcher())
-app.use(bodyParser({}))
-
 app.use(r.routes())
 
-app.listen(3000)
+app.listen(config.port)

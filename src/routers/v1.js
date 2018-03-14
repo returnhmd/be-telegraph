@@ -1,8 +1,8 @@
 const Router = require('koa-router')
-const uuid = require('uuid/v4')
 
 const { Article } = require('../model')
-const { uploadImg } = require('../helper')
+const { uploadImg, randomStringCookie, randomStringFile } = require('../helper')
+const { cookieKey } = require('../config')
 
 const router = new Router()
 
@@ -21,10 +21,10 @@ router.get('/:articlePath', async ctx => {
 router.post('/save', async ctx => {
   const { body } = ctx.request
 
-  let cookie = ctx.cookies.get('uuid')
+  let cookie = ctx.cookies.get(cookieKey)
   if (!cookie) {
-    cookie = uuid()
-    ctx.cookies.set('uuid', cookie)
+    cookie = randomStringCookie()
+    ctx.cookies.set(cookieKey, cookie)
   }
 
   const createdArticle = new Article({ ...body, cookie })
@@ -36,7 +36,7 @@ router.post('/save', async ctx => {
 
 router.put('/update', async ctx => {
   const { body } = ctx.request
-  const cookie = ctx.cookies.get('uuid')
+  const cookie = ctx.cookies.get(cookieKey)
   const article = await Article.findById(
     body.id,
     {},
@@ -61,13 +61,17 @@ router.post('/check', async ctx => {
     { select: { cookie: true } },
   )
 
-  if (ctx.cookies.get('uuid') === cookie) accessToEdit = true
+  if (ctx.cookies.get(cookieKey) === cookie) accessToEdit = true
 
   ctx.body = { can_edit: accessToEdit }
 })
 
 router.post('/upload', async ctx => {
-  const createdFilePath = await uploadImg(ctx.req, '/home/hmd/nginxfiles/imgs')
+  const createdFilePath = await uploadImg(
+    ctx.req,
+    '/home/hmd/nginxfiles/imgs',
+    randomStringFile(),
+  )
   ctx.body = { file_path: createdFilePath }
 })
 

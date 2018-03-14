@@ -4,7 +4,7 @@ const path = require('path')
 const fs = require('fs')
 
 module.exports = {
-  uploadImg(request, pathToSave) {
+  uploadImg(request, pathToSave, newFileName) {
     return new Promise((resolve, reject) => {
       const busboy = new Busboy({
         headers: request.headers,
@@ -16,7 +16,7 @@ module.exports = {
         if (typeFile !== 'image') {
           reject(new Error('File must be image'))
         }
-        const newImgName = `${uuid()}.${extFile}`
+        const newImgName = `${newFileName}.${extFile}`
         const saveTo = path.resolve(pathToSave, `${newImgName}`)
 
         file.pipe(fs.createWriteStream(saveTo))
@@ -25,5 +25,12 @@ module.exports = {
       })
       request.pipe(busboy)
     })
+  },
+
+  randomStringCookie() {
+    return uuid()
+  },
+  randomStringFile() {
+    return uuid()
   },
 }
