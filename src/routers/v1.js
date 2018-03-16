@@ -55,6 +55,8 @@ router.post('/check', async ctx => {
 
   let accessToEdit = false
 
+  console.log('cons in /check', body)
+
   const { cookie } = await Article.findById(
     body.id,
     {},

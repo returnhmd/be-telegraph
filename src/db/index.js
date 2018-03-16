@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const config = require('../config')
+const logger = require('../log')
 
 const connectStr = config.mongoConnect
 
@@ -9,12 +10,10 @@ if (config.env.isDev) mongoose.set('debug', true)
 
 const conn = mongoose.connection
 
-/* eslint no-console: 0 */
-
 conn.on('open', () => {
-  console.log(`Succesful connected to ${connectStr}`)
+  logger.info(`Succesful connected to ${connectStr}`)
 })
 
-conn.on('error', () => {
-  console.error('Error with MongoDB')
+conn.on('error', ({ message }) => {
+  logger.error(message)
 })

@@ -17,5 +17,6 @@ module.exports = {
   appKeys: ['secret'],
   cookieKey: 't_uuid',
   bodyParser: {},
-  logger: {},
+  httpLogger: {},
+  helmet: {},
 }
