@@ -14,108 +14,139 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 describe('routes testing', () => {
-  describe('full chain requests', () => {
+  describe('certain methods', () => {
     const agent = chai.request.agent(server)
 
-    let createdPath
-    let articleForCompareAfterUpdate
+    const infoForCreate = {
+      title: faker.lorem.sentence(),
+      author: faker.name.lastName(),
+      body: faker.lorem.sentences(),
+    }
 
-    it('POST create Article', done => {
+    it('POST /v1/save: Create article', done => {
       agent
         .post('/v1/save')
-        .send({
-          title: faker.lorem.sentence(),
-          author: faker.name.firstName(),
-          body: faker.lorem.sentences(),
-        })
+        .send(infoForCreate)
         .then(res => {
           res.should.have.status(201)
           res.should.be.json
           res.body.should.be.a('object')
           res.body.should.have.property('id')
           res.body.should.have.property('path')
+          res.body.should.have.not.property('cookie')
           res.body.id.should.be.a('string')
           res.body.path.should.be.a('string')
-
           res.should.have.cookie('t_uuid')
-
-          createdPath = res.body.path
-          articleForCompareAfterUpdate = res.body
         })
         .then(done)
         .catch(done)
     })
 
-    let gotId
-    it('GET Article by path', done => {
-      agent
-        .get(`/v1/${createdPath}`)
+    function requestPostCreateArticle(
+      articleFields,
+      funcAgent = chai.request(server),
+    ) {
+      return funcAgent
+        .post('/v1/save')
+        .send(articleFields)
+        .then(res =>
+          Promise.resolve({
+            createdArticleId: res.body.id,
+            createdArticlePath: res.body.path,
+          }),
+        )
+    }
+
+    it('GET /v1/<pathArticle>: Get article after create article', done => {
+      requestPostCreateArticle(infoForCreate, agent)
+        .then(({ createdArticlePath }) =>
+          agent.get(`/v1/${createdArticlePath}`),
+        )
         .then(res => {
           res.should.have.status(200)
           res.should.be.json
           res.body.should.be.a('object')
 
           res.body.should.have.property('_id')
+          res.body.should.have.property('timestamp')
           res.body.should.have.property('title')
           res.body.should.have.property('author')
           res.body.should.have.property('body')
-          res.body.should.have.property('timestamp')
           res.body.should.have.property('path')
 
           res.body._id.should.be.a('string')
+          res.body.timestamp.should.be.a('string')
+          const parsedDate = Date.parse(res.body.timestamp)
+          parsedDate.should.be.a('number')
           res.body.title.should.be.a('string')
           res.body.author.should.be.a('string')
           res.body.body.should.be.a('string')
-          res.body.timestamp.should.be.a('string')
           res.body.path.should.be.a('string')
-
-          gotId = res.body.id
         })
         .then(done)
         .catch(done)
     })
 
-    it('POST for check can edit the Article', done => {
-      agent
-        .post('/v1/check')
-        .send({ keki: '123', id: gotId })
+    it('POST /v1/check: Check on can edit article by ID after it is created', done => {
+      requestPostCreateArticle(infoForCreate, agent)
+        .then(({ createdArticleId }) =>
+          agent.post('/v1/check').send({ id: createdArticleId }),
+        )
         .then(res => {
-          console.log('>>>>>>', gotId)
+          res.should.have.status(200)
+          res.should.be.json
+          res.body.should.be.a('object')
+
+          res.body.should.have.property('can_edit')
+          res.body.can_edit.should.be.true
         })
         .then(done)
         .catch(done)
+    })
+    it('POST /v1/check: Check on can edit article by ID after it is created without cookie', done => {
+      requestPostCreateArticle(infoForCreate)
+        .then(({ createdArticleId }) =>
+          chai
+            .request(server)
+            .post('/v1/check')
+            .send({ id: createdArticleId }),
+        )
+        .then(res => {
+          res.body.can_edit.should.be.false
+        })
+        .then(done)
+        .catch(done)
+    })
+
+    it('PUT /v1/update: Update article by ID after it is created --and compare result with original', done => {
+      requestPostCreateArticle(infoForCreate, agent)
+        .then(({ createdArticleId }) =>
+          agent.put('/v1/update').send({
+            id: createdArticleId,
+            title: 'Test',
+            author: 'Test',
+            body: 'Test',
+          }),
+        )
+        .then(res => {
+          res.should.have.status(204)
+        })
+        .then(done)
+        .catch(done)
+    })
+    it('PUT /v1/update: Update article by ID after it is created without cookie', done => {
+      requestPostCreateArticle(infoForCreate)
+        .then(({ createdArticleId }) =>
+          agent.put('/v1/update').send({ id: createdArticleId, title: '123' }),
+        )
+        .then(res => {
+          throw new Error("Shouldn't get here")
+        })
+        .then(done)
+        .catch(error => {
+          error.should.have.status(403)
+          done()
+        })
     })
   })
 })
-
-// it('POST check on can edit Article', done => {
-//   agent
-//     .post('/v1/check')
-//     .send({ id: gotId })
-//     .then(res => {
-//       res.should.have.status(200)
-//       res.should.be.json
-//       res.body.should.be.a('object')
-
-//       res.body.can_edit.should.be.true
-
-//       res.should.have.property('can_edit')
-//     })
-//     .then(done)
-//     .catch(done)
-// })
-
-// it('PUT Article by path with cookie', done => {
-//   agent
-//     .put(`/v1/update`)
-//     .send({
-//       id: gotId,
-//       title: faker.lorem.sentence(),
-//       body: faker.lorem.sentences(),
-//     })
-//     .then(res => {
-//       res.should.have.status(204)
-//     })
-//     .then(done)
-//     .catch(done)
-// })
