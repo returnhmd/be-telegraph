@@ -8,11 +8,7 @@ const router = new Router()
 
 router.get('/:articlePath', async ctx => {
   const { articlePath } = ctx.params
-  const foundArticle = await Article.findOne(
-    { path: articlePath },
-    {},
-    { select: { cookie: false } },
-  )
+  const foundArticle = await Article.findOne({ path: articlePath })
   if (!foundArticle) ctx.throw(404)
 
   ctx.body = foundArticle
@@ -72,6 +68,7 @@ router.post('/upload', async ctx => {
     '/home/hmd/nginxfiles/imgs',
     randomStringFile(),
   )
+  ctx.status = 201
   ctx.body = { file_path: createdFilePath }
 })
 

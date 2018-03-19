@@ -1,6 +1,5 @@
 const winston = require('winston')
-
-// const config = require('./config')
+const { env } = require('./config')
 
 const { colorize, timestamp, align, printf } = winston.format
 
@@ -11,7 +10,8 @@ const logger = winston.createLogger({
     align(),
     printf(info => `${info.timestamp} [ ${info.level} ]: ${info.message}`),
   ),
-  transports: new winston.transports.Console(),
+  // need to fix it
+  transports: [new winston.transports.Console({ silent: env.isTest })],
 })
 
 module.exports = logger

@@ -15,9 +15,9 @@ app.keys = config.appKeys
 
 if (!config.env.isTest) {
   app.use(httpLogger(config.httpLogger))
-  app.use(errorCatcher())
-} else {
   app.use(errorCatcher(logger))
+} else {
+  app.use(errorCatcher())
 }
 
 app.use(helmet(config.helmet))

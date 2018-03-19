@@ -4,18 +4,23 @@ const { Schema } = mongoose
 const { normilizeStr } = require('./helper')
 
 const articleSchema = new Schema({
-  title: { type: String, required: true },
-  author: { type: String, required: true },
-  cookie: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now },
-  body: { type: Schema.Types.Mixed, required: true, maxlength: [400] },
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: [200],
+    get: v => (v.length > 100 ? `${v.slice(100)}...` : v),
+  },
+  author: { type: String, required: true, trim: true, maxlength: [40] },
+  body: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: [6000],
+  },
   path: { type: String },
-})
-
-articleSchema.post('validate', function fixLengthTitle() {
-  if (this.title.length > 40) {
-    this.title = `${this.title.slice(40)}...`
-  }
+  cookie: { type: String, required: true, select: false },
+  timestamp: { type: Date, default: Date.now },
 })
 
 articleSchema.pre('save', function genPathArticle(next) {

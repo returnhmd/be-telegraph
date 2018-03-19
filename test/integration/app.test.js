@@ -6,6 +6,8 @@ process.env.NODE_ENV = 'test'
 
 const chai = require('chai')
 const chaiHttp = require('chai-http')
+const fs = require('fs')
+const path = require('path')
 const server = require('../../src/app')
 const faker = require('faker')
 
@@ -145,6 +147,40 @@ describe('routes testing', () => {
         .then(done)
         .catch(error => {
           error.should.have.status(403)
+          done()
+        })
+    })
+
+    function requestPostUploadimg(fileName) {
+      return chai
+        .request(server)
+        .post('/v1/upload')
+        .attach(
+          'imageField',
+          fs.readFileSync(path.join(__dirname, 'test.jpg')),
+          fileName,
+        )
+    }
+    it('POST (multipart/form-data) /v1/upload: Upload image on server', done => {
+      requestPostUploadimg('test.jpg')
+        .then(res => {
+          res.should.have.status(201)
+          res.should.be.json
+          res.should.be.a('object')
+          res.body.should.have.property('file_path')
+          res.body.file_path.should.be.a('string')
+        })
+        .then(done)
+        .catch(done)
+    })
+    it('POST (multipart/form-data) /v1/upload: Upload image on server', done => {
+      requestPostUploadimg('app.test.js')
+        .then(res => {
+          throw new Error("File isn't image")
+        })
+        .then(done)
+        .catch(error => {
+          error.should.have.status(400)
           done()
         })
     })
