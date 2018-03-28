@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const { Schema } = mongoose
-const { normilizeStr } = require('./helper')
+const { normilizeStr } = require('./utils')
 
 const articleSchema = new Schema({
   title: {

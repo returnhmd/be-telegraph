@@ -5,7 +5,8 @@ const path = require('path')
 const fs = require('fs')
 
 module.exports = {
-  uploadImg(request, pathToSave, newFileName) {
+  uploadImg(request, newFileName, pathToSave = path.resolve('imgs')) {
+    // console.log(path.resolve('imgs'))
     return new Promise((resolve, reject) => {
       const busboy = new Busboy({
         headers: request.headers,
@@ -27,7 +28,13 @@ module.exports = {
       request.pipe(busboy)
     })
   },
-
+  readAndSendImg(imgName) {
+    const pathToImg = path.resolve('imgs', imgName)
+    if (!fs.existsSync(pathToImg)) {
+      throw new Error('File does not exist!')
+    }
+    return fs.createReadStream(pathToImg)
+  },
   normilizeStr(str, date, quantity, separator = '-') {
     const strArr = []
     const transformedStr = latinize(str)

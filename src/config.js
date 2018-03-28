@@ -6,7 +6,9 @@ const isDev = NODE_ENV === 'development'
 
 module.exports = {
   port: process.env.PORT || 3000,
-  mongoConnect: process.env.MONGO_PORT || 'mongodb://localhost/telegraph',
+  mongoConnect:
+    process.env.MONGO_URL ||
+    'mongodb://returnhmd:aa2325he@ds141328.mlab.com:41328/telegraph',
 
   env: {
     isProd,

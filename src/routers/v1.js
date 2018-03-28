@@ -1,7 +1,12 @@
 const Router = require('koa-router')
 
 const { Article } = require('../model')
-const { uploadImg, randomStringCookie, randomStringFile } = require('../helper')
+const {
+  uploadImg,
+  randomStringCookie,
+  randomStringFile,
+  readAndSendImg,
+} = require('../utils')
 const { cookieKey } = require('../config')
 
 const router = new Router()
@@ -63,13 +68,18 @@ router.post('/check', async ctx => {
 })
 
 router.post('/upload', async ctx => {
-  const createdFilePath = await uploadImg(
-    ctx.req,
-    '/home/hmd/nginxfiles/imgs',
-    randomStringFile(),
-  )
+  const createdFilePath = await uploadImg(ctx.req, randomStringFile())
   ctx.status = 201
   ctx.body = { file_path: createdFilePath }
+})
+
+router.get('/imgs/:imgName', async ctx => {
+  // need add gzip
+  const { imgName } = ctx.params
+  // console.log(imgName)
+  const image = readAndSendImg(imgName)
+  ctx.set({ 'Content-Type': `image/${imgName.split('.')[1]}` })
+  ctx.body = image
 })
 
 module.exports = router

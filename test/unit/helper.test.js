@@ -7,7 +7,7 @@ const chai = require('chai')
 
 const should = chai.should()
 
-const helperFunctions = require('../../src/helper')
+const helperFunctions = require('../../src/utils')
 
 describe('helper.js testing', () => {
   describe('normilizeStr()', () => {
