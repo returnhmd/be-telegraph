@@ -8,7 +8,6 @@ module.exports = {
         else ctx.status = defaultStatusCode
 
         if (logObj) logObj.error(e.message)
-
         ctx.body = { status: ctx.status, message: e.message }
       }
     }

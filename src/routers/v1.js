@@ -1,12 +1,7 @@
 const Router = require('koa-router')
 
 const { Article } = require('../model')
-const {
-  uploadImg,
-  randomStringCookie,
-  randomStringFile,
-  readAndSendImg,
-} = require('../utils')
+const { randomStringCookie } = require('../utils')
 const { cookieKey } = require('../config')
 
 const router = new Router()
@@ -38,7 +33,7 @@ router.post('/save', async ctx => {
   await createdArticle.save()
 
   ctx.status = 201
-  ctx.body = { path: createdArticle.path }
+  ctx.body = { path: createdArticle.path, id: createdArticle.id }
 })
 
 router.put('/update', async ctx => {
@@ -78,22 +73,6 @@ router.post('/check', async ctx => {
   if (ctx.cookies.get(cookieKey) === article.cookie) accessToEdit = true
 
   ctx.body = { can_edit: accessToEdit }
-})
-
-router.post('/upload', async ctx => {
-  const createdFilePath = await uploadImg(ctx.req, randomStringFile())
-  ctx.status = 201
-  ctx.body = { file_path: createdFilePath }
-})
-
-router.get('/imgs/:imgName', async ctx => {
-  const { imgName } = ctx.params
-  // console.log(imgName)
-
-  // need add gzip
-  const imageStream = readAndSendImg(imgName)
-  ctx.set({ 'Content-Type': `image/${imgName.split('.')[1]}` })
-  ctx.body = imageStream
 })
 
 module.exports = router

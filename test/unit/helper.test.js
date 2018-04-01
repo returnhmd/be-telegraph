@@ -27,8 +27,6 @@ describe('helper.js testing', () => {
     })
   })
 
-  describe('uploadImg()', () => {})
-
   describe('randomStringCookie()', () => {
     it('should return a string and have length 36', () => {
       helperFunctions.randomStringCookie().should.be.a('string')

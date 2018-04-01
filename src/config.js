@@ -8,9 +8,8 @@ const isDev = NODE_ENV === 'development'
 
 module.exports = {
   port: process.env.PORT || 3000,
-  mongoConnect:
-    process.env.MONGO_URL ||
-    'mongodb://returnhmd:aa2325he@ds141328.mlab.com:41328/telegraph',
+  // mongodb://returnhmd:aa2325he@ds141328.mlab.com:41328/telegraph'
+  mongoConnect: process.env.MONGO_URL || 'mongodb://localhost/test',
 
   pathToSaveImgs: process.env.SAVE_IMGS_PATH || path.resolve('imgs'),
 

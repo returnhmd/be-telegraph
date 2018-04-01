@@ -25,18 +25,16 @@ describe('routes testing', () => {
       body: faker.lorem.sentences(),
     }
 
-    it('POST /v1/save: Create article', done => {
+    it('POST /save: Create article', done => {
       agent
-        .post('/v1/save')
+        .post('/save')
         .send(infoForCreate)
         .then(res => {
           res.should.have.status(201)
           res.should.be.json
           res.body.should.be.a('object')
-          res.body.should.have.property('id')
           res.body.should.have.property('path')
           res.body.should.have.not.property('cookie')
-          res.body.id.should.be.a('string')
           res.body.path.should.be.a('string')
           res.should.have.cookie('t_uuid')
         })
@@ -49,7 +47,7 @@ describe('routes testing', () => {
       funcAgent = chai.request(server),
     ) {
       return funcAgent
-        .post('/v1/save')
+        .post('/save')
         .send(articleFields)
         .then(res =>
           Promise.resolve({
@@ -59,11 +57,9 @@ describe('routes testing', () => {
         )
     }
 
-    it('GET /v1/<pathArticle>: Get article after create article', done => {
+    it('GET /<pathArticle>: Get article after create article', done => {
       requestPostCreateArticle(infoForCreate, agent)
-        .then(({ createdArticlePath }) =>
-          agent.get(`/v1/${createdArticlePath}`),
-        )
+        .then(({ createdArticlePath }) => agent.get(`/${createdArticlePath}`))
         .then(res => {
           res.should.have.status(200)
           res.should.be.json
@@ -89,10 +85,10 @@ describe('routes testing', () => {
         .catch(done)
     })
 
-    it('POST /v1/check: Check on can edit article by ID after it is created', done => {
+    it('POST /check: Check on can edit article by ID after it is created', done => {
       requestPostCreateArticle(infoForCreate, agent)
         .then(({ createdArticleId }) =>
-          agent.post('/v1/check').send({ id: createdArticleId }),
+          agent.post('/check').send({ id: createdArticleId }),
         )
         .then(res => {
           res.should.have.status(200)
@@ -105,12 +101,12 @@ describe('routes testing', () => {
         .then(done)
         .catch(done)
     })
-    it('POST /v1/check: Check on can edit article by ID after it is created without cookie', done => {
+    it('POST /check: Check on can edit article by ID after it is created without cookie', done => {
       requestPostCreateArticle(infoForCreate)
         .then(({ createdArticleId }) =>
           chai
             .request(server)
-            .post('/v1/check')
+            .post('/check')
             .send({ id: createdArticleId }),
         )
         .then(res => {
@@ -120,10 +116,10 @@ describe('routes testing', () => {
         .catch(done)
     })
 
-    it('PUT /v1/update: Update article by ID after it is created --and compare result with original', done => {
+    it('PUT /update: Update article by ID after it is created --and compare result with original', done => {
       requestPostCreateArticle(infoForCreate, agent)
         .then(({ createdArticleId }) =>
-          agent.put('/v1/update').send({
+          agent.put('/update').send({
             id: createdArticleId,
             title: 'Test',
             author: 'Test',
@@ -136,10 +132,10 @@ describe('routes testing', () => {
         .then(done)
         .catch(done)
     })
-    it('PUT /v1/update: Update article by ID after it is created without cookie', done => {
+    it('PUT /update: Update article by ID after it is created without cookie', done => {
       requestPostCreateArticle(infoForCreate)
         .then(({ createdArticleId }) =>
-          agent.put('/v1/update').send({ id: createdArticleId, title: '123' }),
+          agent.put('/update').send({ id: createdArticleId, title: '123' }),
         )
         .then(res => {
           throw new Error("Shouldn't get here")
@@ -147,40 +143,6 @@ describe('routes testing', () => {
         .then(done)
         .catch(error => {
           error.should.have.status(403)
-          done()
-        })
-    })
-
-    function requestPostUploadimg(fileName) {
-      return chai
-        .request(server)
-        .post('/v1/upload')
-        .attach(
-          'imageField',
-          fs.readFileSync(path.join(__dirname, 'test.jpg')),
-          fileName,
-        )
-    }
-    it('POST (multipart/form-data) /v1/upload: Upload image on server', done => {
-      requestPostUploadimg('test.jpg')
-        .then(res => {
-          res.should.have.status(201)
-          res.should.be.json
-          res.should.be.a('object')
-          res.body.should.have.property('file_path')
-          res.body.file_path.should.be.a('string')
-        })
-        .then(done)
-        .catch(done)
-    })
-    it('POST (multipart/form-data) /v1/upload: Upload image on server', done => {
-      requestPostUploadimg('app.test.js')
-        .then(res => {
-          throw new Error("File isn't image")
-        })
-        .then(done)
-        .catch(error => {
-          error.should.have.status(400)
           done()
         })
     })

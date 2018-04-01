@@ -29,6 +29,3 @@ app.use(r.allowedMethods())
 module.exports = app.listen(config.port, () => {
   logger.info(`App listening on port: ${config.port}`)
 })
-
-// const https = require('https')
-// https.createServer(app.callback()).listen(3000)
