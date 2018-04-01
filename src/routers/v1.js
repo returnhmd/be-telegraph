@@ -9,7 +9,9 @@ const router = new Router()
 router.get('/:articlePath', async ctx => {
   const { articlePath } = ctx.params
   const foundArticle = await Article.findOne({ path: articlePath })
+
   if (!foundArticle) ctx.throw(418)
+
   ctx.body = foundArticle
 })
 
@@ -72,6 +74,10 @@ router.post('/check', async ctx => {
   if (ctx.cookies.get(cookieKey) === article.cookie) accessToEdit = true
 
   ctx.body = { can_edit: accessToEdit }
+})
+
+router.get('/ping', ctx => {
+  ctx.body = 'pong'
 })
 
 module.exports = router
