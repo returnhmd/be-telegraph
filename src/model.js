@@ -4,6 +4,7 @@ const { Schema } = mongoose
 const { normilizeStr } = require('./utils')
 
 const articleSchema = new Schema({
+  author: { type: String, required: true, trim: true, maxlength: [40] },
   title: {
     type: String,
     required: true,
@@ -11,7 +12,6 @@ const articleSchema = new Schema({
     maxlength: [200],
     get: v => (v.length > 100 ? `${v.slice(100)}...` : v),
   },
-  author: { type: String, required: true, trim: true, maxlength: [40] },
   body: {
     type: String,
     required: true,

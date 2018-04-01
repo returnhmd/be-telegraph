@@ -28,15 +28,24 @@ router.post('/save', async ctx => {
     ctx.cookies.set(cookieKey, cookie)
   }
 
-  const createdArticle = new Article({ ...body, cookie })
+  const createdArticle = new Article(
+    {
+      ...body,
+      cookie,
+    },
+    { versionKey: false },
+  )
   await createdArticle.save()
 
   ctx.status = 201
-  ctx.body = { id: createdArticle.id, path: createdArticle.path }
+  ctx.body = { path: createdArticle.path }
 })
 
 router.put('/update', async ctx => {
   const { body } = ctx.request
+
+  if (!body.id) throw new Error('Field `id` is required')
+
   const cookie = ctx.cookies.get(cookieKey)
   const article = await Article.findById(
     body.id,
@@ -54,15 +63,19 @@ router.put('/update', async ctx => {
 router.post('/check', async ctx => {
   const { body } = ctx.request
 
+  if (!body.id) throw new Error('Field `id` is required')
+
   let accessToEdit = false
 
-  const { cookie } = await Article.findById(
+  const article = await Article.findById(
     body.id,
     {},
     { select: { cookie: true } },
   )
 
-  if (ctx.cookies.get(cookieKey) === cookie) accessToEdit = true
+  if (!article) ctx.throw(404)
+
+  if (ctx.cookies.get(cookieKey) === article.cookie) accessToEdit = true
 
   ctx.body = { can_edit: accessToEdit }
 })
@@ -74,12 +87,13 @@ router.post('/upload', async ctx => {
 })
 
 router.get('/imgs/:imgName', async ctx => {
-  // need add gzip
   const { imgName } = ctx.params
   // console.log(imgName)
-  const image = readAndSendImg(imgName)
+
+  // need add gzip
+  const imageStream = readAndSendImg(imgName)
   ctx.set({ 'Content-Type': `image/${imgName.split('.')[1]}` })
-  ctx.body = image
+  ctx.body = imageStream
 })
 
 module.exports = router

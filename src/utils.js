@@ -1,11 +1,14 @@
 const Busboy = require('busboy')
 const latinize = require('latinize')
+// const zlib = require('zlib')
 const uuid = require('uuid/v4')
 const path = require('path')
 const fs = require('fs')
 
+const config = require('./config')
+
 module.exports = {
-  uploadImg(request, newFileName, pathToSave = path.resolve('imgs')) {
+  uploadImg(request, newFileName, pathToSave = config.pathToSaveImgs) {
     // console.log(path.resolve('imgs'))
     return new Promise((resolve, reject) => {
       const busboy = new Busboy({
@@ -28,13 +31,16 @@ module.exports = {
       request.pipe(busboy)
     })
   },
+
   readAndSendImg(imgName) {
-    const pathToImg = path.resolve('imgs', imgName)
+    const pathToImg = path.resolve(config.pathToSaveImgs, imgName)
+    // console.log('pathToImg ->', pathToImg)
     if (!fs.existsSync(pathToImg)) {
       throw new Error('File does not exist!')
     }
     return fs.createReadStream(pathToImg)
   },
+
   normilizeStr(str, date, quantity, separator = '-') {
     const strArr = []
     const transformedStr = latinize(str)

@@ -1,3 +1,5 @@
+const path = require('path')
+
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 const isProd = NODE_ENV === 'production'
@@ -9,6 +11,8 @@ module.exports = {
   mongoConnect:
     process.env.MONGO_URL ||
     'mongodb://returnhmd:aa2325he@ds141328.mlab.com:41328/telegraph',
+
+  pathToSaveImgs: process.env.SAVE_IMGS_PATH || path.resolve('imgs'),
 
   env: {
     isProd,
