@@ -2,6 +2,7 @@ const Koa = require('koa')
 const httpLogger = require('koa-logger')
 const bodyParser = require('koa-bodyparser')
 const helmet = require('koa-helmet')
+const koaCors = require('koa-cors')
 
 require('./db')
 
@@ -21,6 +22,7 @@ if (!config.env.isTest) {
 }
 
 app.use(helmet(config.helmet))
+app.use(koaCors(config.koaCors))
 app.use(bodyParser(config.bodyParser))
 
 app.use(r.routes())

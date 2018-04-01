@@ -6,7 +6,10 @@ module.exports = {
       } catch (e) {
         if (e.status) ctx.status = e.status
         else ctx.status = defaultStatusCode
-
+        console.log('ERROR HAND ===>>', {
+          status: ctx.status,
+          message: e.message,
+        })
         if (logObj) logObj.error(e.message)
         ctx.body = { status: ctx.status, message: e.message }
       }

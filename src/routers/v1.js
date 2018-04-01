@@ -9,8 +9,8 @@ const router = new Router()
 router.get('/:articlePath', async ctx => {
   const { articlePath } = ctx.params
   const foundArticle = await Article.findOne({ path: articlePath })
-  if (!foundArticle) ctx.throw(404)
-
+  console.log('=>>', foundArticle)
+  // if (!foundArticle) ctx.throw(418)
   ctx.body = foundArticle
 })
 
