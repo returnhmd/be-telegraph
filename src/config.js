@@ -23,9 +23,6 @@ module.exports = {
   cookieKey: 't_uuid',
   bodyParser: {},
   httpLogger: {},
-  koaCors: {
-    'Access-Control-Allow-Origin': 'google.com',
-    'Access-Control-Allow-Credentials': true,
-  },
+  koaCors: { 'Access-Control-Allow-Origin': '*' },
   helmet: {},
 }
