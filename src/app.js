@@ -1,4 +1,5 @@
 const Koa = require('koa')
+const views = require('koa-views')
 const httpLogger = require('koa-logger')
 const bodyParser = require('koa-bodyparser')
 const helmet = require('koa-helmet')
@@ -20,6 +21,7 @@ if (!config.env.isTest) {
 } else {
   app.use(errorCatcher())
 }
+app.use(views('./src/views'))
 
 app.use(helmet(config.helmet))
 app.use(koaCors(config.koaCors))

@@ -6,8 +6,9 @@ const { cookieKey } = require('../config')
 
 const router = new Router()
 
-router.get('/test/ping', ctx => {
-  ctx.body = 'pong'
+router.get('/test/ping', async ctx => {
+  //ctx.body = 'pong'
+  await ctx.render('index')
 })
 
 router.get('/:articlePath', async ctx => {
