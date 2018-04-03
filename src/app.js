@@ -4,6 +4,7 @@ const httpLogger = require('koa-logger')
 const bodyParser = require('koa-bodyparser')
 const helmet = require('koa-helmet')
 const koaCors = require('koa-cors')
+const staticFiles = require('koa-static')
 
 require('./db')
 
@@ -21,7 +22,9 @@ if (!config.env.isTest) {
 } else {
   app.use(errorCatcher())
 }
-app.use(views('./src/views'))
+
+app.use(staticFiles(config.staticPath))
+app.use(views(config.viewsPath, config.viewsOpts))
 
 app.use(helmet(config.helmet))
 app.use(koaCors(config.koaCors))

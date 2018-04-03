@@ -25,4 +25,9 @@ module.exports = {
   httpLogger: {},
   koaCors: { 'Access-Control-Allow-Origin': '*' },
   helmet: {},
+
+  staticPath: path.resolve('static'),
+
+  viewsPath: path.resolve('static', 'views'),
+  viewsOpts: { extension: 'ejs' },
 }

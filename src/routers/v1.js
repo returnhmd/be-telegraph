@@ -6,8 +6,11 @@ const { cookieKey } = require('../config')
 
 const router = new Router()
 
-router.get('/test/ping', async ctx => {
-  //ctx.body = 'pong'
+router.get('/test', async ctx => {
+  ctx.body = 'pong'
+})
+
+router.get('/', async ctx => {
   await ctx.render('index')
 })
 
@@ -16,6 +19,9 @@ router.get('/:articlePath', async ctx => {
   const foundArticle = await Article.findOne({ path: articlePath })
 
   if (!foundArticle) ctx.throw(404)
+
+  // рендерим страничку и передаем в нее нашу найденую статью
+  // await ctx.render('index', foundArticle)
 
   ctx.body = foundArticle
 })

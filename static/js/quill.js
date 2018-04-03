@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*!
  * Quill Editor v1.3.6
  * https://quilljs.com/
