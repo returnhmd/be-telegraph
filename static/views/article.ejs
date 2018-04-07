@@ -13,11 +13,11 @@
 		<h1>Welcome</h1>
 		<form class="form">
 			<div class="form-group">
-				<input class="form-control" name="art_title" type="text" value="" required="">
+				<input class="form-control" name="art_title" type="text" value="<% if(foundArticle.title){ %> <%= foundArticle.title %> <%}%>" required="">
 				<label for="art_title">Title</label>
 			</div>
 			<div class="form-group">
-				<input class="form-control" name="author" type="text" value="" required="">
+				<input class="form-control" name="author" type="text" value="<% if(foundArticle.author){ %> <%= foundArticle.author %> <%}%>" required="">
 				<label for="author">Author</label>
 			</div>
 			<div class="form-group">
@@ -28,7 +28,7 @@
 				</div>
 				<label for="body">Text</label>
 			</div>
-			<button class="btn btn-primary" type="submit" id="save-button">Publish</button>
+			<button class="btn btn-primary" type="submit" id="save-button">Save</button>
 		</form>
 	</div>
 
@@ -47,6 +47,7 @@
 	<script src="/js/jquery.min.js"></script>
 	<script src="/js/quill.js"></script>
 	<script>
+		console.log(<% if(this.foundArticle){ %><%- foundArticle %><%}%>);
 		$(document).ready(function () {
 			var quill = new Quill('#editor-container', {
 				modules: {
@@ -72,8 +73,8 @@
 			quill.on('selection-change', function () {
 				checkEditor();
 			});
+			quill.setContents(<% if(foundArticle){ %><%- foundArticle.body %><%}%>);
 			checkEditor();
-			//quill.setContents([ ]);
 			//console.log(JSON.stringify(quill.getContents()));
 			var form = document.querySelector('form');
 			form.onsubmit = function () {
@@ -86,14 +87,15 @@
 				$('#save-button').html('sending..');
 
 				$.ajax({
-					url: '/save',
+					url: '/update',
 					crossDomain: true,
-					type: 'POST',
+					contentType: "application/json; charset=utf-8",
+					type: 'PUT',
+					dataType: "json",
 					data: art,
 					success: function (data) {
 						console.log(data);
 						$('#save-button').html('Saved');
-
 						//location.href = "/" + data.path;
 					}
 				});

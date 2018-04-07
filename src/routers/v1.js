@@ -21,14 +21,13 @@ router.get('/:articlePath', async ctx => {
   if (!foundArticle) ctx.throw(404)
 
   // рендерим страничку и передаем в нее нашу найденую статью
-  // await ctx.render('index', foundArticle)
+  await ctx.render('article', { foundArticle })
 
-  ctx.body = foundArticle
+  //ctx.body = foundArticle
 })
 
 router.post('/save', async ctx => {
   const { body } = ctx.request
-
   let cookie = ctx.cookies.get(cookieKey)
   if (!cookie) {
     cookie = randomStringCookie()

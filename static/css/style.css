@@ -59,9 +59,9 @@ body :-ms-input-placeholder {
   font-weight: 200;
 }
 form {
-  padding: 20px 0;
-  position: relative;
-  z-index: 2;
+	padding: 20px 0;
+	position: relative;
+	z-index: 2;
 }
 form input,
 form textarea, #like-input {
@@ -98,23 +98,28 @@ form textarea:focus, #like-input:focus-within {
   overflow: hidden;
 }
 form button {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  outline: 0;
-  background-color: white;
-  border: 0;
-  padding: 10px 15px;
-  color: #53e3a6;
-  border-radius: 3px;
-  width: 250px;
-  cursor: pointer;
-  font-size: 18px;
-  -webkit-transition-duration: 0.25s;
-          transition-duration: 0.25s;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	outline: 0;
+	background-color: transparent;
+	border: 2px solid #fff;
+	padding: 10px 45px;
+	color: #fff;
+	border-radius: 1px;
+	cursor: pointer;
+	font-size: 18px;
+	-webkit-transition-duration: 0.25s;
+	transition-duration: 0.25s;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	float: right;
+	font-family: Arial;
+	font-weight: 400;
 }
 form button:hover {
   background-color: #f5f7f9;
+  color: #53e3a6;
 }
 .form-group {
   position: relative;
