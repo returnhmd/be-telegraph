@@ -27,7 +27,11 @@ app.use(staticFiles(config.staticPath))
 app.use(views(config.viewsPath, config.viewsOpts))
 
 app.use(helmet(config.helmet))
+
+// !!!need to swap on the custom midleware!!!
 app.use(koaCors(config.koaCors))
+//
+
 app.use(bodyParser(config.bodyParser))
 
 app.use(r.routes())

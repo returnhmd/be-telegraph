@@ -20,10 +20,11 @@ router.get('/:articlePath', async ctx => {
 
   if (!foundArticle) ctx.throw(404)
 
-  // рендерим страничку и передаем в нее нашу найденую статью
-  await ctx.render('article', { foundArticle })
+  let canEdit = false
+  if (ctx.cookies.get(cookieKey)) canEdit = true
 
-  //ctx.body = foundArticle
+  // рендерим страничку и передаем в нее нашу найденую статью
+  await ctx.render('article', { foundArticle, canEdit })
 })
 
 router.post('/save', async ctx => {
@@ -66,24 +67,25 @@ router.put('/update', async ctx => {
   ctx.status = 204
 })
 
-router.post('/check', async ctx => {
-  const { body } = ctx.request
+// Deprecated
+// router.post('/check', async ctx => {
+//   const { body } = ctx.request
 
-  if (!body.id) throw new Error('Field `id` is required')
+//   if (!body.id) throw new Error('Field `id` is required')
 
-  let accessToEdit = false
+//   let accessToEdit = false
 
-  const article = await Article.findById(
-    body.id,
-    {},
-    { select: { cookie: true } },
-  )
+//   const article = await Article.findById(
+//     body.id,
+//     {},
+//     { select: { cookie: true } },
+//   )
 
-  if (!article) ctx.throw(404)
+//   if (!article) ctx.throw(404)
 
-  if (ctx.cookies.get(cookieKey) === article.cookie) accessToEdit = true
+//   if (ctx.cookies.get(cookieKey) === article.cookie) accessToEdit = true
 
-  ctx.body = { can_edit: accessToEdit }
-})
+//   ctx.body = { can_edit: accessToEdit }
+// })
 
 module.exports = router
