@@ -21,7 +21,7 @@ module.exports = {
 
   appKeys: ['secret'],
   cookieKey: 't_uuid',
-  bodyParser: {},
+  bodyParser: { formLimit: '10mb', jsonLimit: '10mb' },
   httpLogger: {},
   koaCors: { 'Access-Control-Allow-Origin': '*' },
   helmet: {},
