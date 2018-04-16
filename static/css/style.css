@@ -13,8 +13,9 @@ body {
   background: #50a3a2;
   padding-bottom: 70px;
   overflow-x: hidden;
-background: -webkit-gradient(linear, left top, right bottom, from(#50a3a2), to(#53e3a6));
-background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+  background: -webkit-gradient(linear, left top, right bottom, from(#50a3a2), to(#53e3a6));
+  background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+  min-height: 100vh;
 }
 body ::-webkit-input-placeholder {
   /* WebKit browsers */
@@ -158,8 +159,12 @@ form button:hover {
 #editor-container .ql-editor {
   font-size: 18px;
   height: 100%;
+  min-height: 40vh;
   font-weight: 300;
   font-family: inherit;
+}
+.readonly #editor-container .ql-editor {
+	min-height: 0;
 }
 .ql-container.ql-snow {
   border: none;
@@ -299,5 +304,24 @@ form button:hover {
   100% {
     -webkit-transform: translateY(-700px) rotate(600deg);
             transform: translateY(-700px) rotate(600deg);
+  }
+}
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding: 10px;
+  }
+  form input, form textarea, #like-input {
+    margin-top: 30px;
+  }
+  .readonly, .readonly:hover, .readonly:active, .readonly:focus, #like-input.readonly {
+    margin-top: 0;
+  }
+  .form-group input:focus ~ label, .form-group input:valid ~ label {
+    left: 12px;
+    top: -30px;
+  }
+  #editor-container .ql-editor {
+    min-height: 30vh;
   }
 }
